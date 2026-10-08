@@ -18,6 +18,7 @@ exports.create = (req, res) => {
     description: req.body.description,
     location: req.body.location,
   });
+
   // Save Temple in the database
   temple
     .save(temple)
@@ -60,7 +61,7 @@ exports.findAll = (req, res) => {
   }
 };
 
-// Find a single Temple with an id
+// Find a single Temple with a temple_id
 exports.findOne = (req, res) => {
   const temple_id = req.params.temple_id;
   if (req.header('apiKey') === apiKey) {
@@ -82,80 +83,52 @@ exports.findOne = (req, res) => {
   }
 };
 
-// // Update a Temple by the id in the request
-// exports.update = (req, res) => {
-//   if (!req.body) {
-//     return res.status(400).send({
-//       message: 'Data to update can not be empty!',
-//     });
-//   }
+// Update a Temple by the temple_id in the request
+exports.update = (req, res) => {
+  if (!req.body) {
+    return res.status(400).send({
+      message: 'Data to update can not be empty!',
+    });
+  }
 
-//   const id = req.params.id;
+  const id = req.params.temple_id;
 
-//   Temple.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
-//     .then((data) => {
-//       if (!data) {
-//         res.status(404).send({
-//           message: `Cannot update Temple with id=${id}. Maybe Temple was not found!`,
-//         });
-//       } else res.send({ message: 'Temple was updated successfully.' });
-//     })
-//     .catch((err) => {
-//       res.status(500).send({
-//         message: 'Error updating Temple with id=' + id,
-//       });
-//     });
-// };
+  Temple.findOneAndUpdate({ temple_id: id }, req.body, {
+    useFindAndModify: false,
+  })
+    .then((data) => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot update Temple with temple_id=${id}. Maybe Temple was not found!`,
+        });
+      } else {
+        res.send({ message: 'Temple was updated successfully.' });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: 'Error updating Temple with temple_id=' + id,
+      });
+    });
+};
 
-// // Delete a Temple with the specified id in the request
-// exports.delete = (req, res) => {
-//   const id = req.params.id;
+// Delete a Temple with the specified temple_id in the request
+exports.delete = (req, res) => {
+  const id = req.params.temple_id;
 
-//   Temple.findByIdAndRemove(id)
-//     .then((data) => {
-//       if (!data) {
-//         res.status(404).send({
-//           message: `Cannot delete Temple with id=${id}. Maybe Temple was not found!`,
-//         });
-//       } else {
-//         res.send({
-//           message: 'Temple was deleted successfully!',
-//         });
-//       }
-//     })
-//     .catch((err) => {
-//       res.status(500).send({
-//         message: 'Could not delete Temple with id=' + id,
-//       });
-//     });
-// };
-
-// // Delete all Temples from the database.
-// exports.deleteAll = (req, res) => {
-//   Temple.deleteMany({})
-//     .then((data) => {
-//       res.send({
-//         message: `${data.deletedCount} Temples were deleted successfully!`,
-//       });
-//     })
-//     .catch((err) => {
-//       res.status(500).send({
-//         message:
-//           err.message || 'Some error occurred while removing all temple.',
-//       });
-//     });
-// };
-
-// // Find all published Temples
-// exports.findAllPublished = (req, res) => {
-//   Temple.find({ published: true })
-//     .then((data) => {
-//       res.send(data);
-//     })
-//     .catch((err) => {
-//       res.status(500).send({
-//         message:
-//           err.message || 'Some error occurred while retrieving temple.',
-//       });
-//     });
-// };
+  Temple.findOneAndDelete({ temple_id: id })
+    .then((data) => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot delete Temple with temple_id=${id}. Maybe Temple was not found!`,
+        });
+      } else {
+        res.send({ message: 'Temple was deleted successfully!' });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: 'Could not delete Temple with temple_id=' + id,
+      });
+    });
+};
