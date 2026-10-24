@@ -1,8 +1,6 @@
 const db = require('../models');
 const Temple = db.temples;
 
-const apiKey =
-  'Ezl0961tEpx2UxTZ5v2uKFK91qdNAr5npRlMT1zLcE3Mg68Xwaj3N8Dyp1R8IvFenrVwHRllOUxF0Og00l0m9NcaYMtH6Bpgdv7N';
 
 // Changed to async/await, removed manual validation (will be handled by express-validator later)
 exports.create = async (req, res) => {
