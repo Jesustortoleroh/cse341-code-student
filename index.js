@@ -2,6 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
+
+// Automatically catch errors in async route handlers
+require('express-async-errors');
+
 const app = express();
 
 app
@@ -10,6 +14,17 @@ app
   .use(express.urlencoded({ extended: true }))
   .use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
   .use('/', require('./routes'));
+
+// Catch-all for 404 routes
+app.use((req, res, next) => {
+  const error = new Error('Route Not Found');
+  error.status = 404;
+  next(error);
+});
+
+// Mount the generic error handler at the end of the chain
+const errorHandler = require('./middleware/errorHandler');
+app.use(errorHandler);
 
 const db = require('./models');
 db.mongoose
